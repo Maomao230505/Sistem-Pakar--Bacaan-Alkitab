@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEM PAKAR BACAAN ALKITAB HARIAN</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            padding: 30px;
+            background-color: #ecf0f1;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .input-section select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        #search-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        #search-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .result-section {
+            padding: 30px;
+            min-height: 200px;
+        }
+
+        #verse-container {
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .verse {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .verse:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .verse-reference {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .verse-text {
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SISTEM PAKAR BACAAN ALKITAB HARIAN</h1>
+            <p class="subtitle">Temukan ayat Alkitab yang sesuai dengan kondisi emosional Anda</p>
+        </header>
+        
+        <main>
+            <div class="input-section">
+                <label for="emotion">Pilih emosi yang Anda rasakan saat ini:</label>
+                <select id="emotion">
+                    <option value="">-- Silakan Pilih --</option>
+                    <option value="sedih">Sedih</option>
+                    <option value="bahagia">Bahagia</option>
+                    <option value="marah">Marah</option>
+                    <option value="gumul">Pergumulan</option>
+                </select>
+                <button id="search-btn">Cari Ayat</button>
+            </div>
+            
+            <div id="result" class="result-section">
+                <div id="verse-container"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Sistem Pakar Bacaan Alkitab Harian &copy; 2023</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Data ayat Alkitab berdasarkan emosi
+        const verseDatabase = {
+            sedih: [
+                {
+                    reference: "Mazmur 147:3",
+                    text: "Ia menyembuhkan orang-orang yang patah hati dan membalut luka-luka mereka."
+                },
+                {
+                    reference: "Yakobus 1:5",
+                    text: "Jika ada di antara kamu yang kekurangan hikmat, hendaklah ia memintakannya kepada Allah."
+                }
+            ],
+            bahagia: [
+                {
+                    reference: "Filipi 1:1",
+                    text: "Aku mengucap syukur kepada Allahku setiap kali aku mengingat kamu."
+                },
+                {
+                    reference: "Mazmur 103:3",
+                    text: "Dia yang mengampuni segala kesalahanmu, yang menyembuhkan segala penyakitmu."
+                }
+            ],
+            marah: [
+                {
+                    reference: "Amsal 15:1",
+                    text: "Jawaban yang lemah lembut meredakan kegeraman, tetapi perkataan yang pedas membangkitkan marah."
+                }
+            ],
+            gumul: [
+                {
+                    reference: "Mazmur 34:18",
+                    text: "TUHAN itu dekat kepada orang-orang yang patah hati, dan Ia menyelamatkan orang-orang yang remuk jiwanya."
+                },
+                {
+                    reference: "Yesaya 43:2",
+                    text: "Apabila engkau menyeberang melalui air, Aku akan menyertai engkau."
+                }
+            ]
+        };
+
+        // Fungsi untuk menampilkan ayat
+        function showVerses(emotion) {
+            const verseContainer = document.getElementById('verse-container');
+            verseContainer.innerHTML = ''; // Kosongkan container
+            
+            if (!emotion) {
+                verseContainer.innerHTML = '<p>Silakan pilih emosi Anda terlebih dahulu.</p>';
+                return;
+            }
+            
+            const verses = verseDatabase[emotion];
+            
+            if (verses && verses.length > 0) {
+                verses.forEach(verse => {
+                    const verseElement = document.createElement('div');
+                    verseElement.className = 'verse';
+                    verseElement.innerHTML = `
+                        <div class="verse-reference">${verse.reference}</div>
+                        <div class="verse-text">"${verse.text}"</div>
+                    `;
+                    verseContainer.appendChild(verseElement);
+                });
+            } else {
+                verseContainer.innerHTML = '<p>Tidak ada ayat yang ditemukan untuk emosi ini.</p>';
+            }
+        }
+
+        // Event listener untuk tombol
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const emotion = document.getElementById('emotion').value;
+            showVerses(emotion);
+        });
+
+        // Event listener untuk select (jika ingin langsung tampil saat memilih)
+        document.getElementById('emotion').addEventListener('change', function() {
+            const emotion = this.value;
+            if (emotion) {
+                showVerses(emotion);
+            }
+        });
+    </script>
+</body>
+</html>
